@@ -5,57 +5,94 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="horizontal">
+    android:orientation="vertical"
+    android:padding="30dp"
+    tools:context=".MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <EditText
             android:id="@+id/etName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="Zadejte jmeno"
+            android:hint="Zadejte jméno"
             android:textColor="@color/blue"
             android:layout_weight="1"
-            />
+            android:layout_marginRight="10dp"/>
+
         <EditText
-            android:id="@+id/etAge"
+            android:id="@+id/etSurname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="Zadejte vek"
+            android:hint="Zadejte příjmení"
             android:textColor="@color/blue"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/etge"
+            android:id="@+id/etPlace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="Zadejte vek"
+            android:hint="Zadejte město"
             android:textColor="@color/blue"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etAge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="Zadejte věk"
+            android:textColor="@color/blue"
+            android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/btnSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            />
+            android:textColor="@color/white"
+            android:text="Odeslat"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"/>
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:text="Smazat" />
+
 
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tvInformation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="Informace"
+        android:layout_marginTop="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
 </LinearLayout>
