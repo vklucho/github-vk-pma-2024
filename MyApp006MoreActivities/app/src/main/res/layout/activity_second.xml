@@ -10,17 +10,17 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary" />
 
-    <EditText
-        android:id="@+id/editTextData"
+    <TextView
+        android:id="@+id/textViewReceived"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Jméno" />
+        android:layout_margin="20px" />
 
     <Button
-        android:id="@+id/buttonSend"
-        android:layout_width="match_parent"
+        android:id="@+id/buttonNext"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Přejít na druhou aktivitu"
+        android:text="Další Aktivita"
         android:backgroundTint="@color/black"
         android:layout_margin="20px"/>
 </LinearLayout>
