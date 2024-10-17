@@ -1,5 +1,6 @@
 package com.example.myapp007toastsnackbar
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -24,9 +25,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnShowSnackbar.setOnClickListener{
-            val snackbar = Snackbar.make(it, "toto je snackbar", Snackbar.LENGTH_LONG)
-
-            snackbar.show()
+            Snackbar.make(binding.root, "já jsem snackbar", Snackbar.LENGTH_LONG)
+                .setDuration(7000)
+                .setBackgroundTint(Color.parseColor("#ff3578"))
+                .setAction("zavřít"){
+                    Toast.makeText(this, "zavírám", Toast.LENGTH_SHORT).show()
+                }
+                .show()
         }
     }
 }
