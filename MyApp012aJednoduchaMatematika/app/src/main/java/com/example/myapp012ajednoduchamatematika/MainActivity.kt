@@ -115,9 +115,9 @@ class MainActivity : AppCompatActivity() {
         totalQuestions++
         if (indexOfCorrectAnswer.toString() == view!!.tag.toString()) {
             points++
-            AlertTextView!!.text = "Correct"
+            AlertTextView!!.text = "Správně"
         } else {
-            AlertTextView!!.text = "Wrong"
+            AlertTextView!!.text = "Špatně"
         }
         ScoreTextView!!.text = "$points/$totalQuestions"
         NextQuestion(cals)
