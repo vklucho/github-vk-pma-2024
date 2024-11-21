@@ -20,7 +20,7 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="16dp"
         android:contentDescription="Přidat poznámku"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/add"
         app:backgroundTint="@color/primaryColor"
         app:tint="@color/white" />
 </RelativeLayout>
