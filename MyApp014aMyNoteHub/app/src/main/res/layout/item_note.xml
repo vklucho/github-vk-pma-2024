@@ -11,7 +11,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="20dp">
 
         <TextView
             android:id="@+id/note_title"
@@ -33,28 +34,39 @@
             android:textSize="14sp"
             android:layout_marginTop="4dp" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <!-- Ikonka pro editaci -->
+            <ImageView
+                android:id="@+id/icon_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/change"
+                android:contentDescription="Upravit poznámku" />
+
+            <!-- Ikonka pro mazání -->
+            <ImageView
+                android:id="@+id/icon_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:src="@drawable/delete"
+                android:contentDescription="Smazat poznámku" />
+
+            <TextView
+                android:id="@+id/note_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kategorie"
+                android:textColor="@color/secondaryTextColor"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <!-- Ikonka pro editaci -->
-        <ImageView
-            android:id="@+id/icon_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:src="@drawable/change"
-            android:contentDescription="Upravit poznámku" />
 
-        <!-- Ikonka pro mazání -->
-        <ImageView
-            android:id="@+id/icon_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:src="@drawable/delete"
-            android:contentDescription="Smazat poznámku" />
-    </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

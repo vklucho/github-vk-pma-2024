@@ -1,7 +1,11 @@
 package com.example.myapp014amynotehub
 
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -19,10 +23,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var noteAdapter: NoteAdapter
     private lateinit var database: NoteHubDatabase
 
+    // Přidání proměnných pro filtrování a řazení
+    private var isNameAscending = true // Pro sledování stavu řazení podle názvu
+    private var currentCategory: String = "Vše" // Aktuálně vybraná kategorie
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
+       super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -50,18 +58,24 @@ class MainActivity : AppCompatActivity() {
         binding.fabAddNote.setOnClickListener {
             showAddNoteDialog()
         }
+        // Nastavení uživatelského rozhraní (filtry, řazení atd.)
+        setupUI()
     }
 
     private fun insertDefaultCategories() {
         lifecycleScope.launch {
-            val existingCategories = database.categoryDao().getAllCategories().first()  // Použití first() pro získání seznamu
-            if (existingCategories.isEmpty()) {
-                val defaultCategories = listOf(
-                    Category(name = "Práce"),
-                    Category(name = "Osobní"),
-                    Category(name = "Nápady")
-                )
-                defaultCategories.forEach { database.categoryDao().insert(it) }
+            val defaultCategories = listOf(
+                "Osobní",
+                "Práce",
+                "Nápady"
+            )
+
+            for (categoryName in defaultCategories) {
+                val existingCategory = database.categoryDao().getCategoryByName(categoryName)
+                if (existingCategory == null) {
+                    // Kategorie s tímto názvem neexistuje, vložíme ji
+                    database.categoryDao().insert(Category(name = categoryName))
+                }
             }
         }
     }
@@ -83,16 +97,56 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadNotes() {
         lifecycleScope.launch {
-            database.noteDao().getAllNotes().collect { notes ->
-                noteAdapter = NoteAdapter(
-                    notes,
-                    onDeleteClick = { note -> deleteNote(note) },
-                    onEditClick = { note -> editNote(note) }
-                )
-                binding.recyclerView.adapter = noteAdapter
+            var notes = if (currentCategory == "Vše") {
+                database.noteDao().getAllNotes().first()
+            } else {
+                val category = database.categoryDao().getCategoryByName(currentCategory)
+                if (category != null) {
+                    database.noteDao().getNotesByCategoryId(category.id).first()
+                } else {
+                    emptyList()
+                }
             }
+
+            // Aplikujeme řazení podle názvu
+            if (isNameAscending) {
+                notes = notes.sortedWith(compareBy { it.title?.lowercase() ?: "" }) // Ignorujeme velká/malá písmena
+            } else {
+                notes = notes.sortedWith(compareByDescending { it.title?.lowercase() ?: "" })
+            }
+
+            // Aktualizace RecyclerView
+            noteAdapter = NoteAdapter(
+                notes = notes,
+                onDeleteClick = { note -> deleteNote(note) },
+                onEditClick = { note -> editNote(note) },
+                lifecycleScope = lifecycleScope,
+                database = database
+            )
+            binding.recyclerView.adapter = noteAdapter
         }
     }
+
+    private fun clearDatabase() {
+        lifecycleScope.launch {
+            // Smazání všech poznámek
+            database.noteDao().deleteAllNotes()
+
+            // Smazání všech kategorií
+            database.categoryDao().deleteAllCategories()
+
+            // Resetování auto-increment hodnoty
+            resetAutoIncrement("note_table")
+            resetAutoIncrement("category_table")
+        }
+    }
+
+    private fun resetAutoIncrement(tableName: String) {
+        lifecycleScope.launch {
+            database.openHelper.writableDatabase.execSQL("DELETE FROM sqlite_sequence WHERE name = '$tableName'")
+        }
+    }
+
 
 
 
@@ -120,6 +174,16 @@ class MainActivity : AppCompatActivity() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_note, null)
         val titleEditText = dialogView.findViewById<EditText>(R.id.editTextTitle)
         val contentEditText = dialogView.findViewById<EditText>(R.id.editTextContent)
+        val spinnerCategory = dialogView.findViewById<Spinner>(R.id.spinnerCategory)
+
+        // Načtení kategorií z databáze a jejich zobrazení ve Spinneru
+        lifecycleScope.launch {
+            val categories = database.categoryDao().getAllCategories().first()  // Načteme kategorie
+            val categoryNames = categories.map { it.name }  // Převedeme na seznam názvů kategorií
+            val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, categoryNames)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinnerCategory.adapter = adapter
+        }
 
         val dialog = AlertDialog.Builder(this)
             .setTitle("Přidat poznámku")
@@ -127,20 +191,68 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Přidat") { _, _ ->
                 val title = titleEditText.text.toString()
                 val content = contentEditText.text.toString()
-                addNoteToDatabase(title, content)
+                val selectedCategory = spinnerCategory.selectedItem.toString()  // Získáme vybranou kategorii
+
+                // Najdeme ID vybrané kategorie
+                lifecycleScope.launch {
+                    val category = database.categoryDao().getCategoryByName(selectedCategory)
+                    if (category != null) {
+                        addNoteToDatabase(title, content, category.id)
+                    }
+                }
             }
             .setNegativeButton("Zrušit", null)
             .create()
 
         dialog.show()
     }
-    private fun addNoteToDatabase(title: String, content: String) {
+    private fun addNoteToDatabase(title: String, content: String, categoryId: Int) {
         lifecycleScope.launch {
-            val newNote = Note(title = title, content = content)
+            val newNote = Note(title = title, content = content, categoryId = categoryId)
             database.noteDao().insert(newNote)  // Vloží poznámku do databáze
             loadNotes()  // Aktualizuje seznam poznámek
         }
     }
+
+
+    private fun setupUI() {
+        setupFilterSpinner()
+        setupSortButtons()
+    }
+
+    private fun setupFilterSpinner() {
+        lifecycleScope.launch {
+            val categories = database.categoryDao().getAllCategories().first()
+            val categoryNames = categories.map { it.name }.toMutableList()
+            categoryNames.add(0, "Vše") // Přidáme možnost "Vše"
+
+            val adapter = ArrayAdapter(this@MainActivity, android.R.layout.simple_spinner_item, categoryNames)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spinnerFilterCategory.adapter = adapter
+
+            // Nastavení OnItemSelectedListener
+            binding.spinnerFilterCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    currentCategory = categoryNames[position]
+                    loadNotes() // Načte poznámky podle vybrané kategorie
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    // Není třeba nic dělat, když není nic vybráno
+                }
+            }
+        }
+    }
+
+    private fun setupSortButtons() {
+        binding.btnSortByName.setOnClickListener {
+            isNameAscending = !isNameAscending
+            loadNotes()
+        }
+    }
+
+
+
 
 
 
