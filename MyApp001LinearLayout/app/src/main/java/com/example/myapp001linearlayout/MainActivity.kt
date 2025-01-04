@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
             insets
         } */
 
-        //komentar
+        //komentar 2
 
         val etName = findViewById<EditText>(R.id.etName)
         val etSurname = findViewById<EditText>(R.id.etSurname)
