@@ -21,6 +21,8 @@ class MainActivity : AppCompatActivity() {
             insets
         } */
 
+        //HOTOVO
+
 
         val etName = findViewById<EditText>(R.id.etName)
         val etSurname = findViewById<EditText>(R.id.etSurname)
