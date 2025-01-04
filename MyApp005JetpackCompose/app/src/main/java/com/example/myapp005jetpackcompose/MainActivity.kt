@@ -33,6 +33,7 @@ fun ComposePerson() {
     var psc by remember { mutableStateOf("") }
     var state by remember { mutableStateOf("") }
 
+    //HOTOVO
     // Přidáme Scaffold, abychom mohli přidat TopAppBar
     Scaffold(
         topBar = {
