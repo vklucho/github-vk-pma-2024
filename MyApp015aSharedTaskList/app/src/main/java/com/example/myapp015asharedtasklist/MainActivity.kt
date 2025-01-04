@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var firestore: FirebaseFirestore
 
+    //HOTOVO
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
