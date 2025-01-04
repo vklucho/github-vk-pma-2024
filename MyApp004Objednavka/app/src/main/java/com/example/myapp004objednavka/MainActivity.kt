@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
             val selectedRadioButton = findViewById<RadioButton>(checkedId)
             val selectedText = selectedRadioButton.text.toString()
 
+            //HOTOVO
             // Vytvoření Toastu
             Toast.makeText(this, "Vybrali jste: $selectedText", Toast.LENGTH_SHORT).show()
 
