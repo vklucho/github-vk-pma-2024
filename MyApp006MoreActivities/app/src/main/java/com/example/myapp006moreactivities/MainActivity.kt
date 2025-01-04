@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //HOTOVO
         setSupportActionBar(binding.toolbar)
 
         binding.buttonSend.setOnClickListener {
