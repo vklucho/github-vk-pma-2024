@@ -1,20 +1,16 @@
 package com.example.myapp012aimagetoapp
 
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.myapp012aimagetoapp.databinding.ActivityMainBinding
-import android.content.Intent
-
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var uri: Uri? = null  // Globální proměnná pro uložení URI obrázku
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,16 +23,19 @@ class MainActivity : AppCompatActivity() {
             binding.ivImage.setImageURI(uri)
         }
 
-        binding.btnTakeImage.setOnClickListener(){
+        binding.btnTakeImage.setOnClickListener {
             getContent.launch("image/*")
         }
 
-        binding.ivImage.setOnClickListener {
-            uri?.let {
-                val intent = Intent(this, FullScreenImageActivity::class.java)
-                intent.putExtra("image_uri", it)  // Předání URI obrázku nové aktivitě
-                startActivity(intent)
-            }
+        binding.btnBlackAndWhite.setOnClickListener {
+            applyBlackAndWhiteFilter()
         }
+    }
+
+    private fun applyBlackAndWhiteFilter() {
+        val colorMatrix = ColorMatrix()
+        colorMatrix.setSaturation(0f)
+        val filter = ColorMatrixColorFilter(colorMatrix)
+        binding.ivImage.colorFilter = filter
     }
 }
