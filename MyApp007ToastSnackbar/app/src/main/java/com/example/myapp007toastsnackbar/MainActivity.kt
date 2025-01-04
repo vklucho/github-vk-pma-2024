@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //HOTOVO
 
     private fun showCustomToast(message: String) {
 
