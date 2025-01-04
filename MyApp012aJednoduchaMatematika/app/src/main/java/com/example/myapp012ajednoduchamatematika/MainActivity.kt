@@ -6,12 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import kotlinx.coroutines.NonCancellable.start
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
@@ -34,10 +30,10 @@ class MainActivity : AppCompatActivity() {
     var points = 0
     var totalQuestions = 0
     var cals = ""
+    var showDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
         val calInt = intent.getStringExtra("cals")
@@ -46,14 +42,12 @@ class MainActivity : AppCompatActivity() {
         QuestionTextText = findViewById(R.id.QuestionTextText)
         ScoreTextView = findViewById(R.id.ScoreTextView)
         AlertTextView = findViewById(R.id.AlertTextView)
-        //FinalScoreTextView = findViewById(R.id.FinalScoreTextView)
         btn0 = findViewById(R.id.button0)
         btn1 = findViewById(R.id.button1)
         btn2 = findViewById(R.id.button2)
         btn3 = findViewById(R.id.button3)
 
         start()
-
     }
 
     fun NextQuestion(cal: String) {
@@ -65,70 +59,50 @@ class MainActivity : AppCompatActivity() {
 
         for (i in 0..3) {
             if (indexOfCorrectAnswer == i) {
-
                 when (cal) {
-                    "+" -> {
-                        answers.add(a + b)
-                    }
-                    "-" -> {
-                        answers.add(a - b)
-                    }
-                    "*" -> {
-                        answers.add(a * b)
-                    }
-                    "/" -> {
-                        try {
-                            answers.add(a / b)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
+                    "+" -> answers.add(a + b)
+                    "-" -> answers.add(a - b)
+                    "*" -> answers.add(a * b)
+                    "/" -> try { answers.add(a / b) } catch (e: Exception) { e.printStackTrace() }
                 }
             } else {
                 var wrongAnswer = random.nextInt(20)
                 try {
-                    while (
-                        wrongAnswer == a + b
-                        || wrongAnswer == a - b
-                        || wrongAnswer == a * b
-                        || wrongAnswer == a / b
-                    ) {
+                    while (wrongAnswer == a + b || wrongAnswer == a - b || wrongAnswer == a * b || wrongAnswer == a / b) {
                         wrongAnswer = random.nextInt(20)
                     }
                     answers.add(wrongAnswer)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                } catch (e: Exception) { e.printStackTrace() }
             }
         }
+
         try {
             btn0!!.text = "${answers[0]}"
             btn1!!.text = "${answers[1]}"
             btn2!!.text = "${answers[2]}"
             btn3!!.text = "${answers[3]}"
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     fun optionSelect(view: View?) {
         totalQuestions++
         if (indexOfCorrectAnswer.toString() == view!!.tag.toString()) {
             points++
-            AlertTextView!!.text = "Správně"
+            AlertTextView!!.text = "Correct"
         } else {
-            AlertTextView!!.text = "Špatně"
+            AlertTextView!!.text = "Wrong"
         }
         ScoreTextView!!.text = "$points/$totalQuestions"
         NextQuestion(cals)
-
     }
 
     fun PlayAgain(view: View?) {
+        showDialog?.dismiss() // Zavře dialogové okno
         points = 0
         totalQuestions = 0
         ScoreTextView!!.text = "$points/$totalQuestions"
         countDownTimer!!.start()
+        start() // Restartuje hru
     }
 
     private fun start() {
@@ -147,11 +121,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun openDilog() {
         val inflate = LayoutInflater.from(this)
-        var winDialog = inflate.inflate(R.layout.win_layout, null)
+        val winDialog = inflate.inflate(R.layout.win_layout, null)
         FinalScoreTextView = winDialog.findViewById(R.id.FinalScoreTextView)
         val btnPlayAgain = winDialog.findViewById<Button>(R.id.buttonPlayAgain)
         val btnBack = winDialog.findViewById<Button>(R.id.buttonBack)
-        var dialog = AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
         dialog.setCancelable(false)
         dialog.setView(winDialog)
         FinalScoreTextView!!.text = "$points/$totalQuestions"
@@ -161,8 +135,7 @@ class MainActivity : AppCompatActivity() {
         btnBack.setOnClickListener {
             onBackPressed()
         }
-        val showDialog = dialog.create()
-        showDialog.show()
+        showDialog = dialog.create() // Uloží referenci na dialog
+        showDialog!!.show()
     }
-
 }
