@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    android:background="@color/background">
+
+    <TextView
+        android:id="@+id/tvQuoteOfTheDay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Citát dne:"
+        android:textColor="@color/text_black"
+        android:background="@drawable/rounded_quote"
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:layout_marginBottom="24dp"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/btnShowQuotes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/btn_cta"
+        android:textColor="@color/text_white"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        android:text="Ukázat náhodné citáty" />
+
+
+    <Button
+        android:id="@+id/btnShowFavorites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/btn_other"
+        android:textColor="@color/text_black"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        android:text="Zobrazit oblíbené citáty" />
+    <Button
+        android:id="@+id/btnTestNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Test Notifikace"
+        android:backgroundTint="@color/btn_other"
+        android:textColor="@color/text_black"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>
